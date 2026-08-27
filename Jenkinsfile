@@ -2,35 +2,26 @@ pipeline {
 
     agent any
 
-         stages {
+    stages {
 
-             stage('checkout') {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
 
-                steps {
-                   checkout scm
-                }
-               
-           }
-              stage('install dependencies') {
- 
-                 steps {
-                  sh  'npm install'
-               }
-           }
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
 
-               stage('test') {
-            
-               sh  steps 'npm test'
-               }
-        
-           }
-       
-       }
+        stage('Test') {
+            steps {
+                sh 'npm test'
+            }
+        }
+
+    }
 
 }
-     
- 
-
-
-
-                                       
