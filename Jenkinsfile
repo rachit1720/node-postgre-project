@@ -21,10 +21,35 @@ pipeline {
                 sh 'npm test'
             }
         }
-     
+
         stage('Docker Build') {
             steps {
-                sh 'docker build -t my-node-app .'
+                sh 'docker build -t my-node-app:latest .'
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-credentials',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASSWORD'
+                    )
+                ]) {
+
+                    sh '''
+                        echo "$DOCKER_PASSWORD" | docker login \
+                            -u "$DOCKER_USER" \
+                            --password-stdin
+
+                        docker tag my-node-app:latest \
+                            rachitsahni/node-postgre-project:latest
+
+                        docker push rachitsahni/node-postgre-project:latest
+                    '''
+                }
             }
         }
 
