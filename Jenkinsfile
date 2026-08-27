@@ -30,7 +30,6 @@ pipeline {
 
         stage('Docker Push') {
             steps {
-
                 withCredentials([
                     usernamePassword(
                         credentialsId: 'dockerhub-creds',
@@ -38,7 +37,6 @@ pipeline {
                         passwordVariable: 'DOCKER_PASSWORD'
                     )
                 ]) {
-
                     sh '''
                         echo "$DOCKER_PASSWORD" | docker login \
                             -u "$DOCKER_USER" \
@@ -48,6 +46,20 @@ pipeline {
                             rachitsahni/node-postgre-project:latest
 
                         docker push rachitsahni/node-postgre-project:latest
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to EC2') {
+            steps {
+                sshagent(['ec2-ssh']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ec2-user@YOUR_EC2_PUBLIC_IP "
+                            cd /home/ec2-user/node-postgre-deploy &&
+                            docker compose pull &&
+                            docker compose up -d
+                        "
                     '''
                 }
             }
