@@ -55,7 +55,7 @@ pipeline {
             steps {
                 sshagent(['ec2-ssh']) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no ec2-user@YOUR_EC2_PUBLIC_IP "
+                        ssh -o StrictHostKeyChecking=no ec2-user@3.108.54.105 "
                             cd /home/ec2-user/node-postgre-deploy &&
                             docker compose pull &&
                             docker compose up -d
